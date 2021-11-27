@@ -1,7 +1,7 @@
 {
-  "name": "twitter-v2",
-  "version": "1.1.0",
-  "description": "An asynchronous client library for the Twitter REST and Streaming V2 API's.",
+  "name": "twitter-v2-withproxy",
+  "version": "1.1.1",
+  "description": "An asynchronous client library for the Twitter REST and Streaming V2 API's and support for requests via a CORS proxy.",
   "main": "build/twitter.js",
   "types": "build/twitter.d.ts",
   "scripts": {
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/HunterLarco/twitter-v2.git"
+    "url": "git+https://github.com/aenikata/twitter-v2.git"
   },
   "keywords": [
     "twitter",
@@ -28,15 +28,15 @@
     "oauth",
     "twit"
   ],
-  "author": "Hunter Larco",
+  "author": "David Burton (building on main work by Hunter Larco)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/HunterLarco/twitter-v2/issues"
+    "url": "https://github.com/aenikata/twitter-v2/issues"
   },
   "engines": {
     "node": ">=0.10.0"
   },
-  "homepage": "https://github.com/HunterLarco/twitter-v2#readme",
+  "homepage": "https://github.com/aenikata/twitter-v2#readme",
   "devDependencies": {
     "@tsconfig/node10": "1.0.7",
     "@types/expect": "24.3.0",

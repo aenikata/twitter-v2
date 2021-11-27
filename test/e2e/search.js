@@ -7,7 +7,7 @@ if (!process.env.TWITTER_DISABLE_E2E) {
     it('should search tweets with bearer token', async () => {
       const client = new Twitter({
         bearer_token: process.env.TWITTER_BEARER_TOKEN,
-      });
+      }, process.env.PROXY_URL);
 
       // Recent Tweet Search API Reference: https://bit.ly/3jqFjKF
       const { data: tweets, meta, errors } = await client.get(
@@ -40,7 +40,7 @@ if (!process.env.TWITTER_DISABLE_E2E) {
       const client = new Twitter({
         consumer_key: process.env.TWITTER_CONSUMER_KEY,
         consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-      });
+      }, process.env.PROXY_URL);
 
       // Recent Tweet Search API Reference: https://bit.ly/3jqFjKF
       const { data: tweets, meta, errors } = await client.get(

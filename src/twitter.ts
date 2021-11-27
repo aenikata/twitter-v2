@@ -34,16 +34,18 @@ function applyParameters(
 
 export default class Twitter {
   public credentials: Credentials;
+  public proxy: string;
 
-  constructor(args: CredentialsArgs) {
+  constructor(args: CredentialsArgs, proxy?: string) {
     this.credentials = new Credentials(args);
+    this.proxy = proxy || "";
   }
 
   async get<T extends any>(
     endpoint: string,
     parameters?: RequestParameters
   ): Promise<T> {
-    const url = new URL(`https://api.twitter.com/2/${endpoint}`);
+    const url = new URL(`${this.proxy}https://api.twitter.com/2/${endpoint}`);
     applyParameters(url, parameters);
 
     const json = await fetch(url.toString(), {
@@ -51,6 +53,7 @@ export default class Twitter {
         Authorization: await this.credentials.authorizationHeader(url, {
           method: 'GET',
         }),
+        Origin: 'TwitterAPI',
       },
     }).then((response) => response.json());
 
@@ -67,7 +70,7 @@ export default class Twitter {
     body: object,
     parameters?: RequestParameters
   ): Promise<T> {
-    const url = new URL(`https://api.twitter.com/2/${endpoint}`);
+    const url = new URL(`${this.proxy}https://api.twitter.com/2/${endpoint}`);
     applyParameters(url, parameters);
 
     const json = await fetch(url.toString(), {
@@ -78,6 +81,7 @@ export default class Twitter {
           method: 'POST',
           body: body,
         }),
+        Origin: 'TwitterAPI',
       },
       body: JSON.stringify(body || {}),
     }).then((response) => response.json());
@@ -94,7 +98,7 @@ export default class Twitter {
     endpoint: string,
     parameters?: RequestParameters
   ): Promise<T> {
-    const url = new URL(`https://api.twitter.com/2/${endpoint}`);
+    const url = new URL(`${this.proxy}https://api.twitter.com/2/${endpoint}`);
     applyParameters(url, parameters);
 
     const json = await fetch(url.toString(), {
@@ -103,6 +107,7 @@ export default class Twitter {
         Authorization: await this.credentials.authorizationHeader(url, {
           method: 'DELETE',
         }),
+        Origin: 'TwitterAPI',
       },
     }).then((response) => response.json());
 
@@ -114,6 +119,8 @@ export default class Twitter {
     return json;
   }
 
+  // Stream will not work with a simple CORS proxy as the proxy won't know when to end the connection and will leave it open
+  // stream therefore doesn't use the proxy url and will likely fail if a proxy was needed
   stream<T extends any>(
     endpoint: string,
     parameters?: RequestParameters,
@@ -132,6 +139,7 @@ export default class Twitter {
             Authorization: await this.credentials.authorizationHeader(url, {
               method: 'GET',
             }),
+            Origin: 'TwitterAPI',
           },
         });
       },

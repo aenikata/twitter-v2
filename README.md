@@ -1,21 +1,22 @@
 # Twitter V2 API for Node.js
 
 [![v2](https://img.shields.io/endpoint?url=https%3A%2F%2Ftwbadges.glitch.me%2Fbadges%2Fv2)](https://developer.twitter.com/en/docs/twitter-api)
-![](https://github.com/hunterlarco/twitter-v2/workflows/ci/badge.svg?branch=master)
+![](https://github.com/aenikata/twitter-v2/workflows/ci/badge.svg?branch=master)
 
-An asynchronous client library for the Twitter REST and Streaming
+An asynchronous client library for the Twitter REST and Streaming, with support for making non-streaming requests via a proxy
 [V2 API's](https://developer.twitter.com/en/docs/twitter-api/early-access).
 
 [Try it now](https://npm.runkit.com/twitter-v2)
 
 ```javascript
-const Twitter = require('twitter-v2');
+const Twitter = require('twitter-v2-withproxy');
 
 const client = new Twitter({
   consumer_key: '',
   consumer_secret: '',
   access_token_key: '',
   access_token_secret: '',
+  proxy_url: '',
 });
 
 const { data } = await client.get('tweets', { ids: '1228393702244134912' });
@@ -24,9 +25,9 @@ console.log(data);
 
 ## Installation
 
-`npm install twitter-v2`
+`npm install twitter-v2-withproxy`
 
-[![NPM](https://nodei.co/npm/twitter-v2.png?compact=true)](https://nodei.co/npm/twitter-v2/)
+[![NPM](https://nodei.co/npm/twitter-v2-withproxy.png?compact=true)](https://nodei.co/npm/twitter-v2-withproxy/)
 
 ## Quick Start
 
@@ -85,6 +86,7 @@ The REST API convenience methods return Promises.
 ## Streaming API
 
 Use the streaming convenience methods for any stream APIs.
+Note that the proxy is not supported here as most proxies will not detect the disconnection and would leave the connection to Twitter open
 
 ```javascript
 client.stream(path, urlParams);
