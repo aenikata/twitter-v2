@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const abort_controller_1 = __importDefault(require("abort-controller"));
 const node_fetch_1 = __importDefault(require("node-fetch"));
-const url_1 = require("url");
+const whatwg_url_1 = require("whatwg-url");
 const Credentials_1 = __importDefault(require("./Credentials"));
 const TwitterError_js_1 = __importDefault(require("./TwitterError.js"));
 const TwitterStream_1 = __importDefault(require("./TwitterStream"));
@@ -29,12 +29,12 @@ function applyParameters(url, parameters, prefix) {
 class Twitter {
     constructor(args, proxy) {
         this.credentials = new Credentials_1.default(args);
-        this.proxy = proxy || "";
+        this.proxy = proxy || '';
     }
     async get(endpoint, parameters) {
-        const url = new url_1.URL(`${this.proxy}https://api.twitter.com/2/${endpoint}`);
+        const url = new whatwg_url_1.URL(`${this.proxy}https://api.twitter.com/2/${endpoint}`);
         applyParameters(url, parameters);
-        const json = await (0, node_fetch_1.default)(url.toString(), {
+        const json = await node_fetch_1.default(url.toString(), {
             headers: {
                 Authorization: await this.credentials.authorizationHeader(url, {
                     method: 'GET',
@@ -49,9 +49,9 @@ class Twitter {
         return json;
     }
     async post(endpoint, body, parameters) {
-        const url = new url_1.URL(`${this.proxy}https://api.twitter.com/2/${endpoint}`);
+        const url = new whatwg_url_1.URL(`${this.proxy}https://api.twitter.com/2/${endpoint}`);
         applyParameters(url, parameters);
-        const json = await (0, node_fetch_1.default)(url.toString(), {
+        const json = await node_fetch_1.default(url.toString(), {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
@@ -70,9 +70,9 @@ class Twitter {
         return json;
     }
     async delete(endpoint, parameters) {
-        const url = new url_1.URL(`${this.proxy}https://api.twitter.com/2/${endpoint}`);
+        const url = new whatwg_url_1.URL(`${this.proxy}https://api.twitter.com/2/${endpoint}`);
         applyParameters(url, parameters);
-        const json = await (0, node_fetch_1.default)(url.toString(), {
+        const json = await node_fetch_1.default(url.toString(), {
             method: 'delete',
             headers: {
                 Authorization: await this.credentials.authorizationHeader(url, {
@@ -90,9 +90,9 @@ class Twitter {
     stream(endpoint, parameters, options) {
         const abortController = new abort_controller_1.default();
         return new TwitterStream_1.default(async () => {
-            const url = new url_1.URL(`https://api.twitter.com/2/${endpoint}`);
+            const url = new whatwg_url_1.URL(`https://api.twitter.com/2/${endpoint}`);
             applyParameters(url, parameters);
-            return (0, node_fetch_1.default)(url.toString(), {
+            return node_fetch_1.default(url.toString(), {
                 signal: abortController.signal,
                 headers: {
                     Authorization: await this.credentials.authorizationHeader(url, {
