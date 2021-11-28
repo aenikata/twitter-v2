@@ -27,17 +27,19 @@ function applyParameters(url, parameters, prefix) {
     }
 }
 class Twitter {
-    constructor(args) {
+    constructor(args, proxy) {
         this.credentials = new Credentials_1.default(args);
+        this.proxy = proxy || "";
     }
     async get(endpoint, parameters) {
-        const url = new url_1.URL(`https://api.twitter.com/2/${endpoint}`);
+        const url = new url_1.URL(`${this.proxy}https://api.twitter.com/2/${endpoint}`);
         applyParameters(url, parameters);
-        const json = await node_fetch_1.default(url.toString(), {
+        const json = await (0, node_fetch_1.default)(url.toString(), {
             headers: {
                 Authorization: await this.credentials.authorizationHeader(url, {
                     method: 'GET',
                 }),
+                Origin: 'TwitterAPI',
             },
         }).then((response) => response.json());
         const error = TwitterError_js_1.default.fromJson(json);
@@ -47,9 +49,9 @@ class Twitter {
         return json;
     }
     async post(endpoint, body, parameters) {
-        const url = new url_1.URL(`https://api.twitter.com/2/${endpoint}`);
+        const url = new url_1.URL(`${this.proxy}https://api.twitter.com/2/${endpoint}`);
         applyParameters(url, parameters);
-        const json = await node_fetch_1.default(url.toString(), {
+        const json = await (0, node_fetch_1.default)(url.toString(), {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
@@ -57,6 +59,7 @@ class Twitter {
                     method: 'POST',
                     body: body,
                 }),
+                Origin: 'TwitterAPI',
             },
             body: JSON.stringify(body || {}),
         }).then((response) => response.json());
@@ -67,14 +70,15 @@ class Twitter {
         return json;
     }
     async delete(endpoint, parameters) {
-        const url = new url_1.URL(`https://api.twitter.com/2/${endpoint}`);
+        const url = new url_1.URL(`${this.proxy}https://api.twitter.com/2/${endpoint}`);
         applyParameters(url, parameters);
-        const json = await node_fetch_1.default(url.toString(), {
+        const json = await (0, node_fetch_1.default)(url.toString(), {
             method: 'delete',
             headers: {
                 Authorization: await this.credentials.authorizationHeader(url, {
                     method: 'DELETE',
                 }),
+                Origin: 'TwitterAPI',
             },
         }).then((response) => response.json());
         const error = TwitterError_js_1.default.fromJson(json);
@@ -88,12 +92,13 @@ class Twitter {
         return new TwitterStream_1.default(async () => {
             const url = new url_1.URL(`https://api.twitter.com/2/${endpoint}`);
             applyParameters(url, parameters);
-            return node_fetch_1.default(url.toString(), {
+            return (0, node_fetch_1.default)(url.toString(), {
                 signal: abortController.signal,
                 headers: {
                     Authorization: await this.credentials.authorizationHeader(url, {
                         method: 'GET',
                     }),
+                    Origin: 'TwitterAPI',
                 },
             });
         }, () => {

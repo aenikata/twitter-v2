@@ -13,8 +13,10 @@ if (process.env.TWITTER_DISABLE_E2E) {
   console.log(chalk.dim('- TWITTER_CONSUMER_KEY'));
   console.log(chalk.dim('- TWITTER_CONSUMER_SECRET'));
   console.log(chalk.dim('- TWITTER_BEARER_TOKEN'));
-  console.log('To test including a proxy, also define the following environment variable:')
-  console.log(chalk.dim('- PROXY_URL'))
+  console.log(
+    'To test including a proxy, also define the following environment variable:'
+  );
+  console.log(chalk.dim('- PROXY_URL'));
   console.log();
   console.log('or, skip e2e tests with TWITTER_DISABLE_E2E');
   console.log();

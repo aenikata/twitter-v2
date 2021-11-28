@@ -38,7 +38,7 @@ export default class Twitter {
 
   constructor(args: CredentialsArgs, proxy?: string) {
     this.credentials = new Credentials(args);
-    this.proxy = proxy || "";
+    this.proxy = proxy || '';
   }
 
   async get<T extends any>(

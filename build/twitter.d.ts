@@ -5,7 +5,8 @@ export declare interface RequestParameters {
 }
 export default class Twitter {
     credentials: Credentials;
-    constructor(args: CredentialsArgs);
+    proxy: string;
+    constructor(args: CredentialsArgs, proxy?: string);
     get<T extends any>(endpoint: string, parameters?: RequestParameters): Promise<T>;
     post<T extends any>(endpoint: string, body: object, parameters?: RequestParameters): Promise<T>;
     delete<T extends any>(endpoint: string, parameters?: RequestParameters): Promise<T>;

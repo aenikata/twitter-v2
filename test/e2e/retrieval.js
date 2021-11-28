@@ -5,9 +5,12 @@ import Twitter from '../../src/twitter';
 if (!process.env.TWITTER_DISABLE_E2E) {
   describe('e2e retrieval', () => {
     it('should retrieve tweets with bearer token', async () => {
-      const client = new Twitter({
-        bearer_token: process.env.TWITTER_BEARER_TOKEN,
-      }, process.env.PROXY_URL);
+      const client = new Twitter(
+        {
+          bearer_token: process.env.TWITTER_BEARER_TOKEN,
+        },
+        process.env.PROXY_URL
+      );
 
       // Tweet Lookup API Reference: https://bit.ly/2QF58Kw
       const { data: tweet, errors } = await client.get('tweets', {
@@ -26,10 +29,13 @@ if (!process.env.TWITTER_DISABLE_E2E) {
     });
 
     it('should retrieve tweets with consumer tokens', async () => {
-      const client = new Twitter({
-        consumer_key: process.env.TWITTER_CONSUMER_KEY,
-        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-      }, process.env.PROXY_URL);
+      const client = new Twitter(
+        {
+          consumer_key: process.env.TWITTER_CONSUMER_KEY,
+          consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+        },
+        process.env.PROXY_URL
+      );
 
       // Tweet Lookup API Reference: https://bit.ly/2QF58Kw
       const { data: tweet, errors } = await client.get('tweets', {

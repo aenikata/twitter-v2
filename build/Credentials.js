@@ -69,7 +69,7 @@ function validate(credentials) {
     }
 }
 async function createBearerToken({ consumer_key, consumer_secret }) {
-    const response = await node_fetch_1.default('https://api.twitter.com/oauth2/token', {
+    const response = await (0, node_fetch_1.default)('https://api.twitter.com/oauth2/token', {
         method: 'post',
         headers: {
             Authorization: 'Basic ' +
