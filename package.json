@@ -1,6 +1,6 @@
 {
   "name": "twitter-v2-withproxy",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "description": "An asynchronous client library for the Twitter REST and Streaming V2 API's and support for requests via a CORS proxy.",
   "main": "build/twitter.js",
   "types": "build/twitter.d.ts",
