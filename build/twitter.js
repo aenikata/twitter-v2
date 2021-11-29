@@ -9,6 +9,7 @@ const whatwg_url_1 = require("whatwg-url");
 const Credentials_1 = __importDefault(require("./Credentials"));
 const TwitterError_js_1 = __importDefault(require("./TwitterError.js"));
 const TwitterStream_1 = __importDefault(require("./TwitterStream"));
+const fetch = typeof window != 'undefined' ? window.fetch.bind(window) : node_fetch_1.default;
 function applyParameters(url, parameters, prefix) {
     prefix = prefix || '';
     if (!parameters) {
@@ -34,7 +35,7 @@ class Twitter {
     async get(endpoint, parameters) {
         const url = new whatwg_url_1.URL(`${this.proxy}https://api.twitter.com/2/${endpoint}`);
         applyParameters(url, parameters);
-        const json = await node_fetch_1.default(url.toString(), {
+        const json = await fetch(url.toString(), {
             headers: {
                 Authorization: await this.credentials.authorizationHeader(url, {
                     method: 'GET',
@@ -51,7 +52,7 @@ class Twitter {
     async post(endpoint, body, parameters) {
         const url = new whatwg_url_1.URL(`${this.proxy}https://api.twitter.com/2/${endpoint}`);
         applyParameters(url, parameters);
-        const json = await node_fetch_1.default(url.toString(), {
+        const json = await fetch(url.toString(), {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
@@ -72,7 +73,7 @@ class Twitter {
     async delete(endpoint, parameters) {
         const url = new whatwg_url_1.URL(`${this.proxy}https://api.twitter.com/2/${endpoint}`);
         applyParameters(url, parameters);
-        const json = await node_fetch_1.default(url.toString(), {
+        const json = await fetch(url.toString(), {
             method: 'delete',
             headers: {
                 Authorization: await this.credentials.authorizationHeader(url, {
@@ -92,7 +93,7 @@ class Twitter {
         return new TwitterStream_1.default(async () => {
             const url = new whatwg_url_1.URL(`https://api.twitter.com/2/${endpoint}`);
             applyParameters(url, parameters);
-            return node_fetch_1.default(url.toString(), {
+            return fetch(url.toString(), {
                 signal: abortController.signal,
                 headers: {
                     Authorization: await this.credentials.authorizationHeader(url, {

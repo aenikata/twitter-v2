@@ -1,5 +1,5 @@
 import AbortController from 'abort-controller';
-import fetch from 'node-fetch';
+import nodefetch from 'node-fetch';
 //import { URL } from 'url';
 import { URL } from 'whatwg-url';
 
@@ -10,6 +10,10 @@ import TwitterStream, { StreamOptions } from './TwitterStream';
 export declare interface RequestParameters {
   [key: string]: string | Array<string> | RequestParameters;
 }
+
+declare let window: any;
+const fetch =
+  typeof window != 'undefined' ? window.fetch.bind(window) : nodefetch;
 
 function applyParameters(
   url: URL,
