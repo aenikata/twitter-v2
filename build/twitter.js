@@ -39,7 +39,7 @@ class Twitter {
                 Authorization: await this.credentials.authorizationHeader(url, {
                     method: 'GET',
                 }),
-                Origin: 'TwitterAPI',
+                'x-requested-with': 'XMLHTTPREQUEST',
             },
         }).then((response) => response.json());
         const error = TwitterError_js_1.default.fromJson(json);
@@ -59,7 +59,7 @@ class Twitter {
                     method: 'POST',
                     body: body,
                 }),
-                Origin: 'TwitterAPI',
+                'x-requested-with': 'XMLHTTPREQUEST',
             },
             body: JSON.stringify(body || {}),
         }).then((response) => response.json());
@@ -78,7 +78,7 @@ class Twitter {
                 Authorization: await this.credentials.authorizationHeader(url, {
                     method: 'DELETE',
                 }),
-                Origin: 'TwitterAPI',
+                'x-requested-with': 'XMLHTTPREQUEST',
             },
         }).then((response) => response.json());
         const error = TwitterError_js_1.default.fromJson(json);
@@ -98,7 +98,7 @@ class Twitter {
                     Authorization: await this.credentials.authorizationHeader(url, {
                         method: 'GET',
                     }),
-                    Origin: 'TwitterAPI',
+                    'x-requested-with': 'XMLHTTPREQUEST',
                 },
             });
         }, () => {
