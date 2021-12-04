@@ -1,5 +1,3 @@
-/// <reference types="node" />
-import { URL } from 'url';
 declare interface ApplicationConsumerCredentials {
     consumer_key: string;
     consumer_secret: string;
@@ -27,7 +25,8 @@ export default class Credentials {
     private _access_token_secret?;
     private _bearer_token_promise?;
     private _oauth?;
-    constructor(args: CredentialsArgs);
+    private _proxy;
+    constructor(args: CredentialsArgs, proxy: string);
     get consumer_key(): string | undefined;
     get consumer_secret(): string | undefined;
     get bearer_token(): string | undefined;
@@ -36,7 +35,7 @@ export default class Credentials {
     appAuth(): boolean;
     userAuth(): boolean;
     createBearerToken(): Promise<void>;
-    authorizationHeader(url: URL, request: {
+    authorizationHeader(url: string, request: {
         method: string;
         body?: object;
     }): Promise<string>;

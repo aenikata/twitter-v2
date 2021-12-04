@@ -1,7 +1,6 @@
 import OAuth from 'oauth-1.0a';
 import crypto from 'crypto';
 import fetch from 'node-fetch';
-import { URL } from 'url';
 
 import TwitterError from './TwitterError';
 
@@ -156,8 +155,8 @@ function validate(credentials: CredentialsArgs) {
   }
 }
 
-async function createBearerToken({ consumer_key, consumer_secret }) {
-  const response = await fetch('https://api.twitter.com/oauth2/token', {
+async function createBearerToken({ consumer_key, consumer_secret, proxy }) {
+  const response = await fetch(proxy + 'https://api.twitter.com/oauth2/token', {
     method: 'post',
     headers: {
       Authorization:
@@ -201,9 +200,12 @@ export default class Credentials {
 
   private _oauth?: OAuth;
 
-  constructor(args: CredentialsArgs) {
+  private _proxy: string;
+
+  constructor(args: CredentialsArgs, proxy: string) {
     removeNullAndUndefined(args);
     validate(args);
+    this._proxy = proxy;
 
     if ('consumer_key' in args) {
       this._consumer_key = args.consumer_key;
@@ -286,6 +288,7 @@ export default class Credentials {
     this._bearer_token_promise = createBearerToken({
       consumer_key: this.consumer_key,
       consumer_secret: this.consumer_secret,
+      proxy: this._proxy,
     })
       .then((token) => {
         this._bearer_token = token;
@@ -298,7 +301,7 @@ export default class Credentials {
   }
 
   async authorizationHeader(
-    url: URL,
+    url: string,
     request: { method: string; body?: object }
   ): Promise<string> {
     if (this.appAuth()) {

@@ -68,8 +68,8 @@ function validate(credentials) {
             'used with bearer_token');
     }
 }
-async function createBearerToken({ consumer_key, consumer_secret }) {
-    const response = await node_fetch_1.default('https://api.twitter.com/oauth2/token', {
+async function createBearerToken({ consumer_key, consumer_secret, proxy }) {
+    const response = await node_fetch_1.default(proxy + 'https://api.twitter.com/oauth2/token', {
         method: 'post',
         headers: {
             Authorization: 'Basic ' +
@@ -89,9 +89,10 @@ async function createBearerToken({ consumer_key, consumer_secret }) {
     return body.access_token;
 }
 class Credentials {
-    constructor(args) {
+    constructor(args, proxy) {
         removeNullAndUndefined(args);
         validate(args);
+        this._proxy = proxy;
         if ('consumer_key' in args) {
             this._consumer_key = args.consumer_key;
             this._consumer_secret = args.consumer_secret;
@@ -153,6 +154,7 @@ class Credentials {
         this._bearer_token_promise = createBearerToken({
             consumer_key: this.consumer_key,
             consumer_secret: this.consumer_secret,
+            proxy: this._proxy,
         })
             .then((token) => {
             this._bearer_token = token;

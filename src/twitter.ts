@@ -1,8 +1,5 @@
 import AbortController from 'abort-controller';
-import nodefetch from 'node-fetch';
-//import { URL } from 'url';
-import { URL } from 'whatwg-url';
-
+import axios, { AxiosInstance } from 'axios';
 import Credentials, { CredentialsArgs } from './Credentials';
 import TwitterError from './TwitterError.js';
 import TwitterStream, { StreamOptions } from './TwitterStream';
@@ -11,63 +8,49 @@ export declare interface RequestParameters {
   [key: string]: string | Array<string> | RequestParameters;
 }
 
-declare let window: any;
-const fetch =
-  typeof window != 'undefined' ? window.fetch.bind(window) : nodefetch;
-
-function applyParameters(
-  url: URL,
-  parameters?: RequestParameters,
-  prefix?: string
-) {
-  prefix = prefix || '';
-
-  if (!parameters) {
-    return;
-  }
-
-  for (const [key, value] of Object.entries(parameters)) {
-    if (typeof value == 'object' && value instanceof Array) {
-      url.searchParams.set(prefix + key, value.join(','));
-    } else if (typeof value == 'object') {
-      applyParameters(url, value, `${prefix}${key}.`);
-    } else {
-      url.searchParams.set(prefix + key, value);
-    }
-  }
-}
+const twitterApi = 'https://api.twitter.com/2/';
 
 export default class Twitter {
   public credentials: Credentials;
   public proxy: string;
 
   constructor(args: CredentialsArgs, proxy?: string) {
-    this.credentials = new Credentials(args);
+    const credentials = new Credentials(args, proxy || '');
     this.proxy = proxy || '';
+    this.credentials = credentials;
   }
 
   async get<T extends any>(
     endpoint: string,
     parameters?: RequestParameters
   ): Promise<T> {
-    const url = new URL(`${this.proxy}https://api.twitter.com/2/${endpoint}`);
-    applyParameters(url, parameters);
+    const url = twitterApi + endpoint;
+    const authHeader = await this.credentials.authorizationHeader(url, {
+      method: 'GET',
+    });
+    try {
+      const json = await axios
+        .get(this.proxy + url, {
+          params: parameters,
+          withCredentials: true,
+          headers: {
+            Authorization: authHeader,
+            'x-requested-with': 'XMLHTTPREQUEST',
+          },
+        })
+        .then((response) => {
+          return response.data;
+        });
 
-    const json = await fetch(url.toString(), {
-      headers: {
-        Authorization: await this.credentials.authorizationHeader(url, {
-          method: 'GET',
-        }),
-        'x-requested-with': 'XMLHTTPREQUEST',
-      },
-    }).then((response) => response.json());
-
-    const error = TwitterError.fromJson(json);
-    if (error) {
-      throw error;
+      const error = TwitterError.fromJson(json);
+      if (error) {
+        throw error;
+      }
+      return json;
+    } catch (e) {
+      console.log(e.response?.data);
+      throw e;
     }
-
-    return json;
   }
 
   async post<T extends any>(
@@ -75,21 +58,23 @@ export default class Twitter {
     body: object,
     parameters?: RequestParameters
   ): Promise<T> {
-    const url = new URL(`${this.proxy}https://api.twitter.com/2/${endpoint}`);
-    applyParameters(url, parameters);
+    const url = twitterApi + endpoint;
+    const authHeader = await this.credentials.authorizationHeader(url, {
+      method: 'GET',
+    });
 
-    const json = await fetch(url.toString(), {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: await this.credentials.authorizationHeader(url, {
-          method: 'POST',
-          body: body,
-        }),
-        'x-requested-with': 'XMLHTTPREQUEST',
-      },
-      body: JSON.stringify(body || {}),
-    }).then((response) => response.json());
+    const json = await axios
+      .post(this.proxy + url, {
+        params: parameters,
+        withCredentials: true,
+        headers: {
+          Authorization: authHeader,
+          'Content-Type': 'application/json',
+          'x-requested-with': 'XMLHTTPREQUEST',
+        },
+        body: JSON.stringify(body || {}),
+      })
+      .then((response) => response.data);
 
     const error = TwitterError.fromJson(json);
     if (error) {
@@ -103,18 +88,19 @@ export default class Twitter {
     endpoint: string,
     parameters?: RequestParameters
   ): Promise<T> {
-    const url = new URL(`${this.proxy}https://api.twitter.com/2/${endpoint}`);
-    applyParameters(url, parameters);
-
-    const json = await fetch(url.toString(), {
-      method: 'delete',
-      headers: {
-        Authorization: await this.credentials.authorizationHeader(url, {
-          method: 'DELETE',
-        }),
-        'x-requested-with': 'XMLHTTPREQUEST',
-      },
-    }).then((response) => response.json());
+    const url = twitterApi + endpoint;
+    const json = await axios
+      .delete(this.proxy + url, {
+        params: parameters,
+        withCredentials: true,
+        headers: {
+          Authorization: await this.credentials.authorizationHeader(url, {
+            method: 'DELETE',
+          }),
+          'x-requested-with': 'XMLHTTPREQUEST',
+        },
+      })
+      .then((response) => response.data);
 
     const error = TwitterError.fromJson(json);
     if (error) {
@@ -132,18 +118,23 @@ export default class Twitter {
     options?: StreamOptions
   ): TwitterStream {
     const abortController = new AbortController();
-
     return new TwitterStream(
       async () => {
-        const url = new URL(`https://api.twitter.com/2/${endpoint}`);
-        applyParameters(url, parameters);
-
-        return fetch(url.toString(), {
+        const url = twitterApi + endpoint;
+        const authorizationHeader = await this.credentials.authorizationHeader(
+          url,
+          {
+            method: 'GET',
+          }
+        );
+        console.log(JSON.stringify(authorizationHeader));
+        return axios.get(url, {
+          params: parameters,
+          responseType: 'arraybuffer',
+          withCredentials: true,
           signal: abortController.signal,
           headers: {
-            Authorization: await this.credentials.authorizationHeader(url, {
-              method: 'GET',
-            }),
+            Authorization: authorizationHeader,
             'x-requested-with': 'XMLHTTPREQUEST',
           },
         });
